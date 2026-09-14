@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: protal_evb
+  datasource:
+    url: jdbc:postgresql://localhost:5432/telemonitoramento
+    username: postgres
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:troque_essa_chave_antes_de_ir_pra_producao_00000000}
+    expiration: ${JWT_EXPIRATION:86400000}
+  security:
+    cookie-secure: ${COOKIE_SECURE:false}
