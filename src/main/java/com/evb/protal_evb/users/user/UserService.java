@@ -66,4 +66,31 @@ public class UserService {
     private UserResponse toResponse(User user) {
         return new UserResponse(user.getId(), user.getName(), user.isActive());
     }
+
+    @Transactional
+    public UserResponse update(Integer id, UserUpdateRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Não foi encontrado usuário com esse ID"));
+
+        if (!user.isActive()) {
+            throw new IllegalArgumentException(("Não é possível editar um usuário inativo."));
+        }
+
+        if (request.name() != null) {
+            String name = request.name().trim();
+
+            if (name.isEmpty()) {
+                throw new IllegalArgumentException("Preencha o campo de nome.");
+            }
+            if (!name.equalsIgnoreCase(user.getName()) && userRepository.existsByNameIgnoreCase(name)) {
+                throw new IllegalArgumentException("Já existe um usuário com esse nome.");
+            }
+
+            user.setName(name);
+        }
+        if (request.password() != null) {
+            user.setPasswordHash((passwordEncoder.encode(request.password())));
+        }
+        return toResponse(user);
+    }
 }

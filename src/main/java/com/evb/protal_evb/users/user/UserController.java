@@ -38,4 +38,9 @@ public class UserController {
     public ResponseEntity<UserResponse> reactivate(@PathVariable Integer id) {
         return ResponseEntity.ok(userService.reactivate(id));
     }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserResponse> update(@PathVariable Integer id, @Valid @RequestBody UserUpdateRequest request) {
+        return ResponseEntity.ok(userService.update(id, request));
+    }
 }
