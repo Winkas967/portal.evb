@@ -29,8 +29,9 @@ public class SecurityConfig {
 
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/logout", "/error").permitAll()
-                        .requestMatchers(HttpMethod.PATCH, "/api/user/*/deactivate", "/api/users/*/reactivate").hasRole("ADMIN")
+                        .requestMatchers("/login", "/api/auth/login", "/api/auth/logout", "/error", "/css/**", "/js/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/users/*/deactivate", "/api/users/*/reactivate").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/roles").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

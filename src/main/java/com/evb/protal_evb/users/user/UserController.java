@@ -1,5 +1,9 @@
 package com.evb.protal_evb.users.user;
 
+import com.evb.protal_evb.users.user.dto.UserRequest;
+import com.evb.protal_evb.users.user.dto.UserResponse;
+import com.evb.protal_evb.users.user.dto.UserUpdateRequest;
+
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

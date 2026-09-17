@@ -1,4 +1,4 @@
-package com.evb.protal_evb.users.user;
+package com.evb.protal_evb.users.user.dto;
 
 import jakarta.validation.constraints.Size;
 
