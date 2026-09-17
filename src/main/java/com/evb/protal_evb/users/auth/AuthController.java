@@ -3,7 +3,6 @@ package com.evb.protal_evb.users.auth;
 import com.evb.protal_evb.security.JwtService;
 import com.evb.protal_evb.users.auth.dto.AuthRequest;
 import com.evb.protal_evb.users.auth.dto.AuthResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -33,11 +32,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
         String token = jwtService.generateToken(request.username());
-        ResponseCookie cookie = accessTokenCookie(token, Duration.ofMillis(jwtService.getExpirationMillis()), httpRequest.getContextPath());
+        ResponseCookie cookie = accessTokenCookie(token, Duration.ofMillis(jwtService.getExpirationMillis()));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
@@ -45,13 +44,13 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest httpRequest) {
-        ResponseCookie cookie = accessTokenCookie("", Duration.ZERO, httpRequest.getContextPath());
+    public ResponseEntity<Void> logout() {
+        ResponseCookie cookie = accessTokenCookie("", Duration.ZERO);
         return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, cookie.toString()).build();
     }
 
-    private ResponseCookie accessTokenCookie(String value, Duration maxAge, String contextPath) {
+    private ResponseCookie accessTokenCookie(String value, Duration maxAge) {
         return ResponseCookie.from("access_token", value)
-                .httpOnly(true).secure(secureCookie).sameSite("Lax").path(contextPath).maxAge(maxAge).build();
+                .httpOnly(true).secure(secureCookie).sameSite("Lax").path("/").maxAge(maxAge).build();
     }
 }

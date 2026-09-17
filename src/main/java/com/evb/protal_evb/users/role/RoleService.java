@@ -74,7 +74,7 @@ public class RoleService {
                 role.getName(),
                 role.getRole(),
                 role.getUser().getId(),
-                role.getUser().getName()
+                role.getUser().getName(),
                 role.isActive()
         );
     }

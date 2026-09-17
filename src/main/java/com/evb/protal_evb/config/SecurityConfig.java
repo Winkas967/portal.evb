@@ -3,6 +3,7 @@ package com.evb.protal_evb.config;
 import com.evb.protal_evb.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,6 +30,8 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/logout", "/error").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/user/*/deactivate", "/api/users/*/reactivate").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/roles").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf -> csrf.disable())

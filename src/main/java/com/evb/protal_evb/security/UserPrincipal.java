@@ -10,9 +10,11 @@ import java.util.List;
 public class UserPrincipal implements UserDetails {
 
     private final User user;
+    private final List<GrantedAuthority> authorities;
 
-    public UserPrincipal(User user) {
+    public UserPrincipal(User user, List<GrantedAuthority> authorities) {
         this.user = user;
+        this.authorities = authorities;
     }
 
     public Integer getId() {
