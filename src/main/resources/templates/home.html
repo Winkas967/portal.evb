@@ -83,7 +83,7 @@
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#00995d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 </div>
                 <div>
-                    <div class="stat-value">128</div>
+                    <div class="stat-value" id="stat-active-patients">—</div>
                     <div class="stat-label">Pacientes ativos</div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#004e4c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 18 0"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5Z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5Z"/></svg>
                 </div>
                 <div>
-                    <div class="stat-value">34</div>
+                    <div class="stat-value" id="stat-today-calls">—</div>
                     <div class="stat-label">Atendimentos hoje</div>
                 </div>
             </div>
@@ -103,6 +103,7 @@
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f47920" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
                 </div>
                 <div>
+                    <!-- ainda sem dado real por trás: "chamado pendente" nao existe no modelo hoje -->
                     <div class="stat-value">5</div>
                     <div class="stat-label">Chamados pendentes</div>
                 </div>
@@ -113,7 +114,7 @@
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#a8604a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
                 </div>
                 <div>
-                    <div class="stat-value">12</div>
+                    <div class="stat-value" id="stat-active-users">—</div>
                     <div class="stat-label">Usuários ativos</div>
                 </div>
             </div>
@@ -135,30 +136,7 @@
                         <div class="table-head-cell">Status</div>
                     </div>
 
-                    <div class="table-row">
-                        <div class="table-cell-primary">Maria da Silva</div>
-                        <div class="table-cell">Enf. Ana Paula</div>
-                        <div class="table-cell">08:42</div>
-                        <div><span class="status-badge in-progress">Em andamento</span></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell-primary">João Pereira</div>
-                        <div class="table-cell">Enf. Carla Souza</div>
-                        <div class="table-cell">08:15</div>
-                        <div><span class="status-badge done">Concluído</span></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell-primary">Otávio Ramos</div>
-                        <div class="table-cell">Enf. Ana Paula</div>
-                        <div class="table-cell">07:58</div>
-                        <div><span class="status-badge scheduled">Agendado</span></div>
-                    </div>
-                    <div class="table-row">
-                        <div class="table-cell-primary">Luiza Fernandes</div>
-                        <div class="table-cell">Enf. Carla Souza</div>
-                        <div class="table-cell">07:30</div>
-                        <div><span class="status-badge done">Concluído</span></div>
-                    </div>
+                    <div id="recent-patients-body"></div>
                 </div>
             </div>
 
@@ -192,12 +170,12 @@
                         <div class="status-list-item">
                             <div class="status-dot green"></div>
                             <div class="status-list-label">Ativos</div>
-                            <div class="status-list-value">128</div>
+                            <div class="status-list-value" id="status-active-count">—</div>
                         </div>
                         <div class="status-list-item">
                             <div class="status-dot terracotta"></div>
                             <div class="status-list-label">Inativos</div>
-                            <div class="status-list-value">16</div>
+                            <div class="status-list-value" id="status-inactive-count">—</div>
                         </div>
                     </div>
                 </div>
