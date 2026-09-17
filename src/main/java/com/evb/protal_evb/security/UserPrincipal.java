@@ -33,7 +33,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(); // TODO: ligar com as roles da tabela "routes" quando decidido
+        return authorities;
     }
 
     @Override

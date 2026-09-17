@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pacientes — protal.evb</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-mark">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>
+                </div>
+                <div class="sidebar-logo-text">protal.evb</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/home" class="nav-item">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+                    Visão geral
+                </a>
+                <a href="/patients" class="nav-item active">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Pacientes
+                </a>
+                <a href="#" class="nav-item">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+                    Usuários
+                </a>
+                <a href="#" class="nav-item">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6l-8-3Z"/></svg>
+                    Papéis
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-divider"></div>
+            <div class="user-mini">
+                <div class="user-avatar">A</div>
+                <div>
+                    <div class="user-mini-name">admin</div>
+                    <div class="user-mini-role">Administrador</div>
+                </div>
+            </div>
+            <a href="#" class="nav-item" id="logout-link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+                Sair
+            </a>
+        </div>
+    </aside>
+
+    <div class="main-content">
+
+        <div class="topbar">
+            <div>
+                <div class="page-title">Pacientes</div>
+                <div class="page-subtitle">Gerencie o cadastro de pacientes atendidos</div>
+            </div>
+        </div>
+
+        <div class="page-actions-row">
+            <div class="tabs">
+                <button type="button" id="tab-active" class="tab-item active">Ativos</button>
+                <button type="button" id="tab-inactive" class="tab-item">Inativos</button>
+            </div>
+            <button type="button" id="new-patient-button" class="btn-primary">+ Novo paciente</button>
+        </div>
+
+        <div class="panel">
+            <div class="patients-table-head">
+                <div class="table-head-cell">Paciente</div>
+                <div class="table-head-cell">Responsável</div>
+                <div class="table-head-cell">Horário</div>
+                <div class="table-head-cell">Relato</div>
+                <div class="table-head-cell">Status</div>
+                <div class="table-head-cell">Ações</div>
+            </div>
+
+            <div id="patients-table-body"></div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div id="modal-title" class="modal-title">Cadastrar paciente</div>
+
+        <form id="patient-form" class="form-fields">
+            <div class="form-group">
+                <label class="form-label" for="patient-name">Nome</label>
+                <input class="form-input" id="patient-name" type="text" placeholder="Nome do paciente">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="patient-call-time">Horário do atendimento</label>
+                <input class="form-input" id="patient-call-time" type="datetime-local">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="patient-responsible">Responsável</label>
+                <input class="form-input" id="patient-responsible" type="text" placeholder="Quem realizou o atendimento">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="patient-report">Relato do atendimento</label>
+                <input class="form-input" id="patient-report" type="text" placeholder="Resumo do atendimento">
+            </div>
+
+            <p id="modal-error" class="form-error"></p>
+
+            <div class="modal-actions">
+                <button type="button" id="modal-cancel-button" class="btn-secondary">Cancelar</button>
+                <button type="submit" class="btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/patients.js"></script>
+</body>
+</html>

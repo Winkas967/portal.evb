@@ -1,5 +1,6 @@
 package com.evb.protal_evb.users.user;
 
+import com.evb.protal_evb.audit.AuditLogService;
 import com.evb.protal_evb.users.user.dto.UserRequest;
 import com.evb.protal_evb.users.user.dto.UserResponse;
 import com.evb.protal_evb.users.user.dto.UserUpdateRequest;
@@ -13,12 +14,16 @@ import java.util.List;
 @Service
 public class UserService {
 
+    private static final String ENTITY_TYPE = "USER";
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuditLogService auditLogService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.auditLogService = auditLogService;
     }
 
     @Transactional(readOnly = true)
@@ -38,7 +43,9 @@ public class UserService {
         user.setName(name);
         user.setPasswordHash(passwordEncoder.encode(request.password()));
 
-        return toResponse(userRepository.save(user));
+        User saved = userRepository.save(user);
+        auditLogService.record(ENTITY_TYPE, saved.getId(), "CREATE", "Usuário cadastrado: " + saved.getName());
+        return toResponse(saved);
     }
 
     @Transactional
@@ -51,6 +58,7 @@ public class UserService {
         }
 
         user.setActive(false);
+        auditLogService.record(ENTITY_TYPE, user.getId(), "DEACTIVATE", "Usuário excluído (desativado): " + user.getName());
         return toResponse(user);
     }
 
@@ -64,6 +72,7 @@ public class UserService {
         }
 
         user.setActive(true);
+        auditLogService.record(ENTITY_TYPE, user.getId(), "REACTIVATE", "Usuário reativado: " + user.getName());
         return toResponse(user);
     }
 
@@ -95,6 +104,8 @@ public class UserService {
         if (request.password() != null) {
             user.setPasswordHash((passwordEncoder.encode(request.password())));
         }
+
+        auditLogService.record(ENTITY_TYPE, user.getId(), "UPDATE", "Usuário atualizado: " + user.getName());
         return toResponse(user);
     }
 }

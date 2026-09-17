@@ -1,5 +1,6 @@
 package com.evb.protal_evb.patients.patient;
 
+import com.evb.protal_evb.audit.AuditLogService;
 import com.evb.protal_evb.patients.patient.dto.PatientRequest;
 import com.evb.protal_evb.patients.patient.dto.PatientResponse;
 import com.evb.protal_evb.patients.patient.dto.PatientUpdateRequest;
@@ -12,10 +13,14 @@ import java.util.List;
 @Service
 public class PatientService {
 
-    private final PatientRepository patientRepository;
+    private static final String ENTITY_TYPE = "PATIENT";
 
-    public PatientService(PatientRepository patientRepository) {
+    private final PatientRepository patientRepository;
+    private final AuditLogService auditLogService;
+
+    public PatientService(PatientRepository patientRepository, AuditLogService auditLogService) {
         this.patientRepository = patientRepository;
+        this.auditLogService = auditLogService;
     }
 
     @Transactional(readOnly = true)
@@ -31,7 +36,9 @@ public class PatientService {
         patient.setResponsible(request.responsible().trim());
         patient.setCallReport(request.callReport().trim());
 
-        return toResponse(patientRepository.save(patient));
+        Patient saved = patientRepository.save(patient);
+        auditLogService.record(ENTITY_TYPE, saved.getId(), "CREATE", "Paciente cadastrado: " + saved.getName());
+        return toResponse(saved);
     }
 
     @Transactional
@@ -68,6 +75,7 @@ public class PatientService {
             patient.setCallReport(callReport);
         }
 
+        auditLogService.record(ENTITY_TYPE, patient.getId(), "UPDATE", "Paciente atualizado: " + patient.getName());
         return toResponse(patient);
     }
 
@@ -81,6 +89,7 @@ public class PatientService {
         }
 
         patient.setActive(false);
+        auditLogService.record(ENTITY_TYPE, patient.getId(), "DEACTIVATE", "Paciente excluído (desativado): " + patient.getName());
         return toResponse(patient);
     }
 
@@ -94,6 +103,7 @@ public class PatientService {
         }
 
         patient.setActive(true);
+        auditLogService.record(ENTITY_TYPE, patient.getId(), "REACTIVATE", "Paciente reativado: " + patient.getName());
         return toResponse(patient);
     }
 

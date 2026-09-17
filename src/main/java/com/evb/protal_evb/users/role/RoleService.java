@@ -1,5 +1,6 @@
 package com.evb.protal_evb.users.role;
 
+import com.evb.protal_evb.audit.AuditLogService;
 import com.evb.protal_evb.users.role.dto.RoleRequest;
 import com.evb.protal_evb.users.role.dto.RoleResponse;
 import com.evb.protal_evb.users.user.User;
@@ -12,12 +13,16 @@ import java.util.List;
 @Service
 public class RoleService {
 
+    private static final String ENTITY_TYPE = "ROLE";
+
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
 
-    public RoleService(RoleRepository roleRepository, UserRepository userRepository) {
+    public RoleService(RoleRepository roleRepository, UserRepository userRepository, AuditLogService auditLogService) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.auditLogService = auditLogService;
     }
 
     @Transactional(readOnly = true)
@@ -39,7 +44,9 @@ public class RoleService {
         role.setRole(request.role().trim());
         role.setUser(user);
 
-        return toResponse(roleRepository.save(role));
+        Role saved = roleRepository.save(role);
+        auditLogService.record(ENTITY_TYPE, saved.getId(), "CREATE", "Papel cadastrado: " + saved.getRole() + " para " + user.getName());
+        return toResponse(saved);
     }
 
     @Transactional
@@ -52,6 +59,7 @@ public class RoleService {
         }
 
         role.setActive(false);
+        auditLogService.record(ENTITY_TYPE, role.getId(), "DEACTIVATE", "Papel excluído (desativado): " + role.getRole());
         return toResponse(role);
     }
 
@@ -65,6 +73,7 @@ public class RoleService {
         }
 
         role.setActive(true);
+        auditLogService.record(ENTITY_TYPE, role.getId(), "REACTIVATE", "Papel reativado: " + role.getRole());
         return toResponse(role);
     }
 
