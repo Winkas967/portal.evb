@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.evb</groupId>
-	<artifactId>protal_evb</artifactId>
+	<artifactId>portal_evb</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>

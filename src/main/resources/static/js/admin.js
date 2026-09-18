@@ -10,6 +10,7 @@ async function fetchJSON(url) {
     const response = await fetch(url);
 
     if (response.status === 401) {
+        queueNotification("Sua sessão expirou. Faça login novamente.", "info");
         window.location.href = "/login";
         return null;
     }
@@ -29,6 +30,7 @@ async function sendJSON(url, method, body) {
     });
 
     if (response.status === 401) {
+        queueNotification("Sua sessão expirou. Faça login novamente.", "info");
         window.location.href = "/login";
         return { ok: false, data: null };
     }
@@ -298,7 +300,7 @@ async function toggleUserStatus(user) {
     const result = await sendJSON("/api/users/" + user.id + "/" + action, "PATCH");
 
     if (!result.ok) {
-        alert((result.data && result.data.message) || "Não foi possível atualizar o usuário.");
+        showNotification((result.data && result.data.message) || "Não foi possível atualizar o usuário.", "error");
         return;
     }
 
@@ -310,7 +312,7 @@ async function toggleRoleStatus(role) {
     const result = await sendJSON("/api/roles/" + role.id + "/" + action, "PATCH");
 
     if (!result.ok) {
-        alert((result.data && result.data.message) || "Não foi possível atualizar o papel.");
+        showNotification((result.data && result.data.message) || "Não foi possível atualizar o papel.", "error");
         return;
     }
 
@@ -335,6 +337,7 @@ async function loadAll() {
         renderAuditTable();
     } catch (err) {
         console.error("Erro ao carregar administração:", err);
+        showNotification("Não foi possível carregar os dados de administração.", "error");
     }
 }
 
@@ -433,20 +436,46 @@ document.getElementById("logout-link").addEventListener("click", async function 
     window.location.href = "/login";
 });
 
-async function redirectIfNotAdmin() {
+function renderUserMini(me) {
+    const nameEl = document.getElementById("user-mini-name");
+    const roleEl = document.getElementById("user-mini-role");
+    const avatarEl = document.getElementById("user-avatar");
+
+    if (nameEl) nameEl.textContent = me.username;
+    if (roleEl) roleEl.textContent = me.displayRole;
+    if (avatarEl) avatarEl.textContent = me.username.charAt(0).toUpperCase();
+}
+
+async function initAdminPage() {
     try {
         const response = await fetch("/api/auth/me");
-        if (!response.ok) return;
+
+        if (response.status === 401) {
+            window.location.href = "/login";
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error("Falha ao verificar permissões");
+        }
 
         const me = await response.json();
+
         if (!me.roles.includes("ADMIN")) {
+            queueNotification("Você não tem permissão para acessar a área de administração.", "error");
             window.location.href = "/home";
+            return;
         }
+
+        renderUserMini(me);
+        document.querySelector(".app-layout").classList.remove("auth-checking");
+        setTab(currentTab);
+        await loadAll();
     } catch (err) {
         console.error("Erro ao verificar permissões:", err);
+        queueNotification("Não foi possível verificar suas permissões. Tente novamente.", "error");
+        window.location.href = "/home";
     }
 }
 
-redirectIfNotAdmin();
-setTab(currentTab);
-loadAll();
+initAdminPage();

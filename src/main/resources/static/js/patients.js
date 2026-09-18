@@ -1,6 +1,17 @@
 let allPatients = [];
 let currentTab = "active";
 let editingId = null;
+let searchQuery = new URLSearchParams(window.location.search).get("search") || "";
+
+function renderUserMini(me) {
+    const nameEl = document.getElementById("user-mini-name");
+    const roleEl = document.getElementById("user-mini-role");
+    const avatarEl = document.getElementById("user-avatar");
+
+    if (nameEl) nameEl.textContent = me.username;
+    if (roleEl) roleEl.textContent = me.displayRole;
+    if (avatarEl) avatarEl.textContent = me.username.charAt(0).toUpperCase();
+}
 
 async function applyAdminVisibility() {
     try {
@@ -8,13 +19,15 @@ async function applyAdminVisibility() {
         if (!response.ok) return;
 
         const me = await response.json();
-        const isAdmin = me.roles.includes("ADMIN");
+        renderUserMini(me);
 
+        const isAdmin = me.roles.includes("ADMIN");
         if (!isAdmin) {
             document.querySelectorAll(".admin-only").forEach(el => el.classList.add("hidden"));
         }
     } catch (err) {
         console.error("Erro ao verificar permissões:", err);
+        showNotification("Não foi possível verificar suas permissões.", "error");
     }
 }
 
@@ -22,6 +35,7 @@ async function fetchJSON(url) {
     const response = await fetch(url);
 
     if (response.status === 401) {
+        queueNotification("Sua sessão expirou. Faça login novamente.", "info");
         window.location.href = "/login";
         return null;
     }
@@ -41,6 +55,7 @@ async function sendJSON(url, method, body) {
     });
 
     if (response.status === 401) {
+        queueNotification("Sua sessão expirou. Faça login novamente.", "info");
         window.location.href = "/login";
         return { ok: false, data: null };
     }
@@ -77,14 +92,25 @@ function renderTable() {
     const tableBody = document.getElementById("patients-table-body");
     tableBody.innerHTML = "";
 
-    const filtered = allPatients.filter(p => currentTab === "active" ? p.isActive : !p.isActive);
+    const query = searchQuery.trim().toLowerCase();
+
+    const filtered = allPatients.filter(p => {
+        const matchesTab = currentTab === "active" ? p.isActive : !p.isActive;
+        if (!matchesTab) return false;
+        if (!query) return true;
+        return p.name.toLowerCase().includes(query)
+            || p.responsible.toLowerCase().includes(query)
+            || p.callReport.toLowerCase().includes(query);
+    });
 
     if (filtered.length === 0) {
         const empty = document.createElement("div");
         empty.style.padding = "24px 10px";
         empty.style.color = "var(--color-text-muted)";
         empty.style.fontSize = "13px";
-        empty.textContent = currentTab === "active" ? "Nenhum paciente ativo." : "Nenhum paciente inativo.";
+        empty.textContent = query
+            ? "Nenhum paciente encontrado para essa busca."
+            : (currentTab === "active" ? "Nenhum paciente ativo." : "Nenhum paciente inativo.");
         tableBody.appendChild(empty);
         return;
     }
@@ -168,7 +194,7 @@ async function togglePatientStatus(patient) {
     const result = await sendJSON("/api/patients/" + patient.id + "/" + action, "PATCH");
 
     if (!result.ok) {
-        alert((result.data && result.data.message) || "Não foi possível atualizar o paciente.");
+        showNotification((result.data && result.data.message) || "Não foi possível atualizar o paciente.", "error");
         return;
     }
 
@@ -183,11 +209,19 @@ async function loadPatients() {
         renderTable();
     } catch (err) {
         console.error("Erro ao carregar pacientes:", err);
+        showNotification("Não foi possível carregar a lista de pacientes.", "error");
     }
 }
 
 document.getElementById("tab-active").addEventListener("click", () => setTab("active"));
 document.getElementById("tab-inactive").addEventListener("click", () => setTab("inactive"));
+
+document.getElementById("search-input").addEventListener("input", (event) => {
+    searchQuery = event.target.value;
+    renderTable();
+});
+
+document.getElementById("search-input").value = searchQuery;
 document.getElementById("new-patient-button").addEventListener("click", openCreateModal);
 document.getElementById("modal-cancel-button").addEventListener("click", closeModal);
 

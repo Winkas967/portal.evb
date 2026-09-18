@@ -2,6 +2,7 @@ async function fetchJSON(url) {
     const response = await fetch(url);
 
     if (response.status === 401) {
+        queueNotification("Sua sessão expirou. Faça login novamente.", "info");
         window.location.href = "/login";
         return null;
     }
@@ -13,19 +14,31 @@ async function fetchJSON(url) {
     return response.json();
 }
 
+function renderUserMini(me) {
+    const nameEl = document.getElementById("user-mini-name");
+    const roleEl = document.getElementById("user-mini-role");
+    const avatarEl = document.getElementById("user-avatar");
+
+    if (nameEl) nameEl.textContent = me.username;
+    if (roleEl) roleEl.textContent = me.displayRole;
+    if (avatarEl) avatarEl.textContent = me.username.charAt(0).toUpperCase();
+}
+
 async function applyAdminVisibility() {
     try {
         const response = await fetch("/api/auth/me");
         if (!response.ok) return;
 
         const me = await response.json();
-        const isAdmin = me.roles.includes("ADMIN");
+        renderUserMini(me);
 
+        const isAdmin = me.roles.includes("ADMIN");
         if (!isAdmin) {
             document.querySelectorAll(".admin-only").forEach(el => el.classList.add("hidden"));
         }
     } catch (err) {
         console.error("Erro ao verificar permissões:", err);
+        showNotification("Não foi possível verificar suas permissões.", "error");
     }
 }
 
@@ -109,6 +122,7 @@ async function loadDashboard() {
         renderRecentPatients(patients);
     } catch (err) {
         console.error("Erro ao carregar o painel:", err);
+        showNotification("Não foi possível carregar o painel.", "error");
     }
 }
 
@@ -122,6 +136,13 @@ document.getElementById("logout-link").addEventListener("click", async function 
     }
 
     window.location.href = "/login";
+});
+
+document.getElementById("dashboard-search-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const query = document.getElementById("dashboard-search-input").value.trim();
+    window.location.href = query ? ("/patients?search=" + encodeURIComponent(query)) : "/patients";
 });
 
 applyAdminVisibility();

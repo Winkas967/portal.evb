@@ -1,6 +1,6 @@
 spring:
   application:
-    name: protal_evb
+    name: portal_evb
   datasource:
     url: jdbc:postgresql://localhost:5432/telemonitoramento
     username: postgres

@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Visão geral — protal.evb</title>
+    <title>Visão geral — portal.evb</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
@@ -19,7 +19,7 @@
                 <div class="sidebar-logo-mark">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>
                 </div>
-                <div class="sidebar-logo-text">protal.evb</div>
+                <div class="sidebar-logo-text">portal.evb</div>
             </div>
 
             <nav class="sidebar-nav">
@@ -45,10 +45,10 @@
         <div class="sidebar-bottom">
             <div class="sidebar-divider"></div>
             <div class="user-mini">
-                <div class="user-avatar">A</div>
+                <div class="user-avatar" id="user-avatar">A</div>
                 <div>
-                    <div class="user-mini-name">admin</div>
-                    <div class="user-mini-role">Administrador</div>
+                    <div class="user-mini-name" id="user-mini-name">admin</div>
+                    <div class="user-mini-role" id="user-mini-role">Administrador</div>
                 </div>
             </div>
             <a href="#" class="nav-item" id="logout-link">
@@ -66,14 +66,10 @@
                 <div class="page-subtitle">Segunda-feira, 14 de setembro de 2026</div>
             </div>
             <div class="topbar-actions">
-                <div class="search-box">
+                <form class="search-box" id="dashboard-search-form">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a9490" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                    <span>Buscar paciente...</span>
-                </div>
-                <div class="icon-button">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5b6b68" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
-                    <div class="notification-dot"></div>
-                </div>
+                    <input type="text" id="dashboard-search-input" class="search-input" placeholder="Buscar paciente...">
+                </form>
             </div>
         </div>
 
@@ -99,17 +95,6 @@
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon orange">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#f47920" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-                </div>
-                <div>
-                    <!-- ainda sem dado real por trás: "chamado pendente" nao existe no modelo hoje -->
-                    <div class="stat-value">5</div>
-                    <div class="stat-label">Chamados pendentes</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
                 <div class="stat-icon terracotta">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#a8604a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
                 </div>
@@ -125,7 +110,7 @@
             <div class="panel">
                 <div class="panel-header">
                     <div class="panel-title">Atendimentos recentes</div>
-                    <a href="#" class="link-muted" style="color: var(--color-brand-green); font-weight: 600;">Ver todos</a>
+                    <a href="/patients" class="link-muted" style="color: var(--color-brand-green); font-weight: 600;">Ver todos</a>
                 </div>
 
                 <div>
@@ -184,6 +169,7 @@
     </div>
 </div>
 
+<script src="/js/notifications.js"></script>
 <script src="/js/home.js"></script>
 </body>
 </html>
