@@ -793,3 +793,50 @@ a {
   justify-content: flex-end;
   gap: 12px;
 }
+
+/* ===== Admin ===== */
+
+.form-hint {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: -2px;
+}
+
+.users-table-head,
+.users-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.4fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.roles-table-head,
+.roles-table-row {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.6fr 1fr 1.4fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.users-table-head,
+.roles-table-head {
+  padding: 0 10px 10px 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.users-table-row,
+.roles-table-row {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f0ebe1;
+  transition: background 0.15s ease;
+}
+
+.users-table-row:last-child,
+.roles-table-row:last-child {
+  border-bottom: none;
+}
+
+.users-table-row:hover,
+.roles-table-row:hover {
+  background: #faf8f4;
+}

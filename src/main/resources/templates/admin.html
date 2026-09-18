@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Pacientes — protal.evb</title>
+    <title>Administração — protal.evb</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/app.css">
@@ -27,15 +27,15 @@
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
                     Visão geral
                 </a>
-                <a href="/patients" class="nav-item active">
+                <a href="/patients" class="nav-item">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     Pacientes
                 </a>
-                <a href="/admin" class="nav-item">
+                <a href="/admin" class="nav-item active" id="nav-users">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
                     Usuários
                 </a>
-                <a href="/admin?tab=roles" class="nav-item">
+                <a href="/admin?tab=roles" class="nav-item" id="nav-roles">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6l-8-3Z"/></svg>
                     Papéis
                 </a>
@@ -62,66 +62,94 @@
 
         <div class="topbar">
             <div>
-                <div class="page-title">Pacientes</div>
-                <div class="page-subtitle">Gerencie o cadastro de pacientes atendidos</div>
+                <div class="page-title">Administração</div>
+                <div class="page-subtitle">Gerencie usuários e papéis do sistema</div>
             </div>
         </div>
 
         <div class="page-actions-row">
             <div class="tabs">
-                <button type="button" id="tab-active" class="tab-item active">Ativos</button>
-                <button type="button" id="tab-inactive" class="tab-item">Inativos</button>
+                <button type="button" id="tab-users" class="tab-item active">Usuários</button>
+                <button type="button" id="tab-roles" class="tab-item">Papéis</button>
             </div>
-            <button type="button" id="new-patient-button" class="btn-primary">+ Novo paciente</button>
+            <button type="button" id="new-item-button" class="btn-primary">+ Novo usuário</button>
         </div>
 
-        <div class="panel">
-            <div class="patients-table-head">
-                <div class="table-head-cell">Paciente</div>
-                <div class="table-head-cell">Responsável</div>
-                <div class="table-head-cell">Horário</div>
-                <div class="table-head-cell">Relato</div>
+        <div id="users-panel" class="panel">
+            <div class="users-table-head">
+                <div class="table-head-cell">Nome</div>
                 <div class="table-head-cell">Status</div>
                 <div class="table-head-cell">Ações</div>
             </div>
+            <div id="users-table-body"></div>
+        </div>
 
-            <div id="patients-table-body"></div>
+        <div id="roles-panel" class="panel hidden">
+            <div class="roles-table-head">
+                <div class="table-head-cell">Nome</div>
+                <div class="table-head-cell">Papel</div>
+                <div class="table-head-cell">Usuário</div>
+                <div class="table-head-cell">Status</div>
+                <div class="table-head-cell">Ações</div>
+            </div>
+            <div id="roles-table-body"></div>
         </div>
     </div>
 </div>
 
-<div id="modal-overlay" class="modal-overlay hidden">
+<div id="user-modal-overlay" class="modal-overlay hidden">
     <div class="modal-card">
-        <div id="modal-title" class="modal-title">Cadastrar paciente</div>
+        <div id="user-modal-title" class="modal-title">Cadastrar usuário</div>
 
-        <form id="patient-form" class="form-fields">
+        <form id="user-form" class="form-fields">
             <div class="form-group">
-                <label class="form-label" for="patient-name">Nome</label>
-                <input class="form-input" id="patient-name" type="text" placeholder="Nome do paciente">
+                <label class="form-label" for="user-name">Nome</label>
+                <input class="form-input" id="user-name" type="text" placeholder="nome.sobrenome">
             </div>
             <div class="form-group">
-                <label class="form-label" for="patient-call-time">Horário do atendimento</label>
-                <input class="form-input" id="patient-call-time" type="datetime-local">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="patient-responsible">Responsável</label>
-                <input class="form-input" id="patient-responsible" type="text" placeholder="Quem realizou o atendimento">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="patient-report">Relato do atendimento</label>
-                <input class="form-input" id="patient-report" type="text" placeholder="Resumo do atendimento">
+                <label class="form-label" for="user-password" id="user-password-label">Senha</label>
+                <input class="form-input" id="user-password" type="password" placeholder="••••••••">
             </div>
 
-            <p id="modal-error" class="form-error"></p>
+            <p id="user-modal-error" class="form-error"></p>
 
             <div class="modal-actions">
-                <button type="button" id="modal-cancel-button" class="btn-secondary">Cancelar</button>
+                <button type="button" id="user-modal-cancel-button" class="btn-secondary">Cancelar</button>
                 <button type="submit" class="btn-primary">Salvar</button>
             </div>
         </form>
     </div>
 </div>
 
-<script src="/js/patients.js"></script>
+<div id="role-modal-overlay" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div id="role-modal-title" class="modal-title">Cadastrar papel</div>
+
+        <form id="role-form" class="form-fields">
+            <div class="form-group">
+                <label class="form-label" for="role-name">Nome</label>
+                <input class="form-input" id="role-name" type="text" placeholder="Ex.: Administrador do sistema">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="role-value">Papel</label>
+                <input class="form-input" id="role-value" type="text" placeholder="Ex.: ADMIN">
+                <div class="form-hint">Use exatamente "ADMIN" (maiúsculo) para conceder acesso administrativo.</div>
+            </div>
+            <div class="form-group" id="role-user-group">
+                <label class="form-label" for="role-user">Usuário</label>
+                <select class="form-input" id="role-user"></select>
+            </div>
+
+            <p id="role-modal-error" class="form-error"></p>
+
+            <div class="modal-actions">
+                <button type="button" id="role-modal-cancel-button" class="btn-secondary">Cancelar</button>
+                <button type="submit" class="btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/js/admin.js"></script>
 </body>
 </html>

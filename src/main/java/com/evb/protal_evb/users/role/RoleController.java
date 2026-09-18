@@ -2,6 +2,7 @@ package com.evb.protal_evb.users.role;
 
 import com.evb.protal_evb.users.role.dto.RoleRequest;
 import com.evb.protal_evb.users.role.dto.RoleResponse;
+import com.evb.protal_evb.users.role.dto.RoleUpdateRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,11 @@ public class RoleController {
     public ResponseEntity<RoleResponse> create(@Valid @RequestBody RoleRequest request) {
         RoleResponse created = roleService.create(request);
         return ResponseEntity.created(URI.create("/api/roles/" + created.id())).body(created);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RoleResponse> update(@PathVariable Integer id, @Valid @RequestBody RoleUpdateRequest request) {
+        return ResponseEntity.ok(roleService.update(id, request));
     }
 
     @PatchMapping("/{id}/deactivate")

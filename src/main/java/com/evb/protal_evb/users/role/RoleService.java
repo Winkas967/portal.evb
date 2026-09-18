@@ -3,6 +3,7 @@ package com.evb.protal_evb.users.role;
 import com.evb.protal_evb.audit.AuditLogService;
 import com.evb.protal_evb.users.role.dto.RoleRequest;
 import com.evb.protal_evb.users.role.dto.RoleResponse;
+import com.evb.protal_evb.users.role.dto.RoleUpdateRequest;
 import com.evb.protal_evb.users.user.User;
 import com.evb.protal_evb.users.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,34 @@ public class RoleService {
         Role saved = roleRepository.save(role);
         auditLogService.record(ENTITY_TYPE, saved.getId(), "CREATE", "Papel cadastrado: " + saved.getRole() + " para " + user.getName());
         return toResponse(saved);
+    }
+
+    @Transactional
+    public RoleResponse update(Integer id, RoleUpdateRequest request) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Não foi encontrado papel com o ID informado."));
+
+        if (!role.isActive()) {
+            throw new IllegalArgumentException("Não é possível editar um papel inativo.");
+        }
+
+        if (request.name() != null) {
+            String name = request.name().trim();
+            if (name.isEmpty()) {
+                throw new IllegalArgumentException("Preencha o campo de nome.");
+            }
+            role.setName(name);
+        }
+        if (request.role() != null) {
+            String roleValue = request.role().trim();
+            if (roleValue.isEmpty()) {
+                throw new IllegalArgumentException("Preencha o campo de papel/permissão.");
+            }
+            role.setRole(roleValue);
+        }
+
+        auditLogService.record(ENTITY_TYPE, role.getId(), "UPDATE", "Papel atualizado: " + role.getRole());
+        return toResponse(role);
     }
 
     @Transactional
