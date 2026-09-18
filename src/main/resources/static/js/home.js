@@ -13,6 +13,22 @@ async function fetchJSON(url) {
     return response.json();
 }
 
+async function applyAdminVisibility() {
+    try {
+        const response = await fetch("/api/auth/me");
+        if (!response.ok) return;
+
+        const me = await response.json();
+        const isAdmin = me.roles.includes("ADMIN");
+
+        if (!isAdmin) {
+            document.querySelectorAll(".admin-only").forEach(el => el.classList.add("hidden"));
+        }
+    } catch (err) {
+        console.error("Erro ao verificar permissões:", err);
+    }
+}
+
 function formatTime(isoDateTime) {
     return new Date(isoDateTime).toLocaleTimeString("pt-BR", {
         hour: "2-digit",
@@ -108,4 +124,5 @@ document.getElementById("logout-link").addEventListener("click", async function 
     window.location.href = "/login";
 });
 
+applyAdminVisibility();
 loadDashboard();

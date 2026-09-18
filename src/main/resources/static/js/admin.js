@@ -433,5 +433,20 @@ document.getElementById("logout-link").addEventListener("click", async function 
     window.location.href = "/login";
 });
 
+async function redirectIfNotAdmin() {
+    try {
+        const response = await fetch("/api/auth/me");
+        if (!response.ok) return;
+
+        const me = await response.json();
+        if (!me.roles.includes("ADMIN")) {
+            window.location.href = "/home";
+        }
+    } catch (err) {
+        console.error("Erro ao verificar permissões:", err);
+    }
+}
+
+redirectIfNotAdmin();
 setTab(currentTab);
 loadAll();

@@ -2,6 +2,22 @@ let allPatients = [];
 let currentTab = "active";
 let editingId = null;
 
+async function applyAdminVisibility() {
+    try {
+        const response = await fetch("/api/auth/me");
+        if (!response.ok) return;
+
+        const me = await response.json();
+        const isAdmin = me.roles.includes("ADMIN");
+
+        if (!isAdmin) {
+            document.querySelectorAll(".admin-only").forEach(el => el.classList.add("hidden"));
+        }
+    } catch (err) {
+        console.error("Erro ao verificar permissões:", err);
+    }
+}
+
 async function fetchJSON(url) {
     const response = await fetch(url);
 
@@ -225,4 +241,5 @@ document.getElementById("logout-link").addEventListener("click", async function 
     window.location.href = "/login";
 });
 
+applyAdminVisibility();
 loadPatients();
