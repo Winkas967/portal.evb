@@ -3,6 +3,8 @@ let allRoles = [];
 let currentTab = new URLSearchParams(window.location.search).get("tab") === "roles" ? "roles" : "users";
 let editingUserId = null;
 let editingRoleId = null;
+let allAuditLogs = [];
+let auditFilter = "all";
 
 async function fetchJSON(url) {
     const response = await fetch(url);
@@ -43,9 +45,18 @@ function setTab(tab) {
     currentTab = tab;
     document.getElementById("tab-users").classList.toggle("active", tab === "users");
     document.getElementById("tab-roles").classList.toggle("active", tab === "roles");
+    document.getElementById("tab-audit").classList.toggle("active", tab === "audit");
     document.getElementById("users-panel").classList.toggle("hidden", tab !== "users");
     document.getElementById("roles-panel").classList.toggle("hidden", tab !== "roles");
-    document.getElementById("new-item-button").textContent = tab === "users" ? "+ Novo usuário" : "+ Novo papel";
+    document.getElementById("audit-panel").classList.toggle("hidden", tab !== "audit");
+
+    const newItemButton = document.getElementById("new-item-button");
+    if (tab === "audit") {
+        newItemButton.classList.add("hidden");
+    } else {
+        newItemButton.classList.remove("hidden");
+        newItemButton.textContent = tab === "users" ? "+ Novo usuário" : "+ Novo papel";
+    }
 }
 
 function renderUsersTable() {
@@ -150,6 +161,72 @@ function renderRolesTable() {
     }
 }
 
+function formatLogDateTime(isoDateTime) {
+    return new Date(isoDateTime).toLocaleString("pt-BR", {
+        day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"
+    });
+}
+
+function actionLabel(action) {
+    const labels = { CREATE: "Criação", UPDATE: "Atualização", DEACTIVATE: "Exclusão", REACTIVATE: "Reativação" };
+    return labels[action] || action;
+}
+
+function actionBadgeClass(action) {
+    const classes = { CREATE: "audit-create", UPDATE: "audit-update", DEACTIVATE: "audit-deactivate", REACTIVATE: "audit-reactivate" };
+    return classes[action] || "audit-update";
+}
+
+function entityTypeLabel(entityType) {
+    const labels = { PATIENT: "Paciente", USER: "Usuário", ROLE: "Papel" };
+    return labels[entityType] || entityType;
+}
+
+function renderAuditTable() {
+    const tableBody = document.getElementById("audit-table-body");
+    tableBody.innerHTML = "";
+
+    const filtered = auditFilter === "all"
+        ? allAuditLogs
+        : allAuditLogs.filter(l => l.entityType === auditFilter);
+
+    if (filtered.length === 0) {
+        tableBody.innerHTML = "<div style=\"padding: 24px 10px; color: var(--color-text-muted); font-size: 13px;\">Nenhum registro encontrado.</div>";
+        return;
+    }
+
+    for (const log of filtered) {
+        const row = document.createElement("div");
+        row.className = "audit-table-row";
+
+        const timeCell = document.createElement("div");
+        timeCell.className = "table-cell";
+        timeCell.textContent = formatLogDateTime(log.performedAt);
+
+        const actionCell = document.createElement("div");
+        const badge = document.createElement("span");
+        badge.className = "status-badge " + actionBadgeClass(log.action);
+        badge.textContent = actionLabel(log.action);
+        actionCell.appendChild(badge);
+
+        const typeCell = document.createElement("div");
+        typeCell.className = "table-cell";
+        typeCell.textContent = entityTypeLabel(log.entityType) + " #" + log.entityId;
+
+        const userCell = document.createElement("div");
+        userCell.className = "table-cell";
+        userCell.textContent = log.performedByName;
+
+        const detailsCell = document.createElement("div");
+        detailsCell.className = "table-cell table-cell-truncate";
+        detailsCell.title = log.details || "";
+        detailsCell.textContent = log.details || "—";
+
+        row.append(timeCell, actionCell, typeCell, userCell, detailsCell);
+        tableBody.appendChild(row);
+    }
+}
+
 function populateRoleUserSelect(selectedUserId) {
     const select = document.getElementById("role-user");
     select.innerHTML = "";
@@ -242,17 +319,20 @@ async function toggleRoleStatus(role) {
 
 async function loadAll() {
     try {
-        const [users, roles] = await Promise.all([
+        const [users, roles, auditLogs] = await Promise.all([
             fetchJSON("/api/users"),
-            fetchJSON("/api/roles")
+            fetchJSON("/api/roles"),
+            fetchJSON("/api/audit-logs")
         ]);
 
-        if (users === null || roles === null) return;
+        if (users === null || roles === null || auditLogs === null) return;
 
         allUsers = users;
         allRoles = roles;
+        allAuditLogs = auditLogs;
         renderUsersTable();
         renderRolesTable();
+        renderAuditTable();
     } catch (err) {
         console.error("Erro ao carregar administração:", err);
     }
@@ -260,6 +340,12 @@ async function loadAll() {
 
 document.getElementById("tab-users").addEventListener("click", () => setTab("users"));
 document.getElementById("tab-roles").addEventListener("click", () => setTab("roles"));
+document.getElementById("tab-audit").addEventListener("click", () => setTab("audit"));
+
+document.getElementById("audit-filter").addEventListener("change", (event) => {
+    auditFilter = event.target.value;
+    renderAuditTable();
+});
 
 document.getElementById("new-item-button").addEventListener("click", () => {
     if (currentTab === "users") {

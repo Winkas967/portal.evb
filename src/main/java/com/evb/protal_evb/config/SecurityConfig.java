@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/roles").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/roles/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/roles/*/deactivate", "/api/roles/*/reactivate").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/audit-logs").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf -> csrf.disable())

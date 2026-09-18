@@ -840,3 +840,36 @@ a {
 .roles-table-row:hover {
   background: #faf8f4;
 }
+
+/* ===== Auditoria ===== */
+
+.audit-table-head,
+.audit-table-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1.1fr 1.2fr 2.4fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.audit-table-head {
+  padding: 0 10px 10px 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.audit-table-row {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f0ebe1;
+}
+
+.audit-table-row:last-child {
+  border-bottom: none;
+}
+
+.audit-table-row:hover {
+  background: #faf8f4;
+}
+
+.status-badge.audit-create { background: var(--color-green-bg); color: var(--color-green-text); }
+.status-badge.audit-update { background: var(--color-teal-bg); color: var(--color-brand-dark); }
+.status-badge.audit-deactivate { background: var(--color-terracotta-bg); color: var(--color-terracotta-text); }
+.status-badge.audit-reactivate { background: var(--color-orange-bg); color: var(--color-orange-text); }

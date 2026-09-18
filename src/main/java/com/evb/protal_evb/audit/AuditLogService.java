@@ -1,10 +1,13 @@
 package com.evb.protal_evb.audit;
 
+import com.evb.protal_evb.audit.dto.AuditLogResponse;
 import com.evb.protal_evb.security.UserPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class AuditLogService {
@@ -31,6 +34,16 @@ public class AuditLogService {
             log.setPerformedByName("sistema");
         }
         auditLogRepository.save(log);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AuditLogResponse> findAll() {
+        return auditLogRepository.findAllByOrderByPerformedAtDesc().stream().map(this::toResponse).toList();
+    }
+
+    private AuditLogResponse toResponse(AuditLog log) {
+        return new AuditLogResponse(log.getId(), log.getEntityType(), log.getEntityId(), log.getAction(),
+                log.getPerformedByName(), log.getPerformedAt(), log.getDetails());
     }
 
     private UserPrincipal currentUser() {

@@ -71,6 +71,7 @@
             <div class="tabs">
                 <button type="button" id="tab-users" class="tab-item active">Usuários</button>
                 <button type="button" id="tab-roles" class="tab-item">Papéis</button>
+                <button type="button" id="tab-audit" class="tab-item">Auditoria</button>
             </div>
             <button type="button" id="new-item-button" class="btn-primary">+ Novo usuário</button>
         </div>
@@ -93,6 +94,28 @@
                 <div class="table-head-cell">Ações</div>
             </div>
             <div id="roles-table-body"></div>
+        </div>
+
+        <div id="audit-panel" class="panel hidden">
+            <div class="form-group" style="max-width: 240px;">
+                <label class="form-label" for="audit-filter">Filtrar por tipo</label>
+                <select class="form-input" id="audit-filter">
+                    <option value="all">Todos</option>
+                    <option value="PATIENT">Paciente</option>
+                    <option value="USER">Usuário</option>
+                    <option value="ROLE">Papel</option>
+                </select>
+            </div>
+
+            <div class="audit-table-head">
+                <div class="table-head-cell">Data/Hora</div>
+                <div class="table-head-cell">Ação</div>
+                <div class="table-head-cell">Tipo</div>
+                <div class="table-head-cell">Usuário</div>
+                <div class="table-head-cell">Detalhes</div>
+            </div>
+
+            <div id="audit-table-body"></div>
         </div>
     </div>
 </div>
